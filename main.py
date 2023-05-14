@@ -6,24 +6,21 @@ import random
 import string
 from unidecode import unidecode
 
-from butterfingers import butterfinger
-
 import pygame
 
 pygame.init()
 pygame.mixer.init()
 
-enableSound = pygame.mixer.Sound('enableSound.ogg')
-disableSound = pygame.mixer.Sound('disableSound.ogg')
+enableSound = pygame.mixer.Sound('SFX/enableSound.ogg')
+disableSound = pygame.mixer.Sound('SFX/disableSound.ogg')
 
-language = "fr" #fr, en, es
-instantType = False
+language = "en" #fr, en, es
+instantType = False #taper instantanément ?
 
-bombX, bombY = 769, 581
-inputX, inputY = 425, 982
+bombX, bombY = 769, 581 #position bombe sur l'écran
+inputX, inputY = 425, 982 #position de la barre de saisie sur l'écran
 
-funnyCharacters = ["🙂", "🍆", "🍑", "😁", "🥵"]
-#funnyCharacters = ["🍆🍑🥵"]
+funnyCharacters = ["🙂", "🍆", "🍑", "😁", "🥵"] #caractères spéciaux
 
 badWords = []
 usedLetters = []
@@ -71,7 +68,7 @@ def activate():
     longestWord = " "*30
     longestUnusedLetters :int = 0
 
-    with open(language+"List.txt", "r", encoding="utf-8") as f:
+    with open("dictionaries/" +  language+"List.txt", "r", encoding="utf-8") as f:
         for line in f:
             testedWord = unidecode(line).upper().strip()
             
@@ -79,10 +76,9 @@ def activate():
                 longestWord = testedWord
                 longestUnusedLetters = len(getUnusedLettersIn(testedWord))
 
+    print(longestWord)
     pyautogui.moveTo(inputX, inputY)
-    #pyperclip.copy(longestWord)
     pyautogui.leftClick()
-    #pastFunnyCharacter()
     if (instantType):
         pyperclip.copy(longestWord)
         pyautogui.hotkey('ctrl', 'v')
@@ -90,15 +86,13 @@ def activate():
         for letter in longestWord:
             pyautogui.typewrite(letter)
             time.sleep(random.uniform(0.001, 0.05))
-    #butterfinger(longestWord)
+            print(letter)
     pastFunnyCharacter()  
     
-    #pyautogui.hotkey('ctrl', 'v')
     if pyautogui.pixelMatchesColor(inputX, inputY, (25, 21, 19), tolerance=5):
         keyboard.press_and_release('enter')
     time.sleep(.5)
     if pyautogui.pixelMatchesColor(inputX, inputY, (25, 21, 19), tolerance=5):
-        #pyautogui.hotkey('ctrl', 'backspace')
         badWords.append(longestWord)
     else:
         addToUsedLetters(getUnusedLettersIn(longestWord))
@@ -107,17 +101,9 @@ def activate():
 print("READY!")
 enableSound.play()
 while 1:
-    """time.sleep(2)
-    for letter in "salut":
-        pyautogui.typewrite(letter)
-        time.sleep(random.uniform(0.1, 0.3))
-    break;"""
-    """time.sleep(2)
-    activate()
-    break;"""
     try:
         if pyautogui.pixelMatchesColor(inputX, inputY, (25, 21, 19), tolerance=5): # Change this depending on where the input text box is on your screen
-            #time.sleep(random.randint(1,100)/70)
+            time.sleep(random.randint(1,100)/70)
             activate()
     except:
         continue
